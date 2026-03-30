@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/cron/update-heat-scores", "schedule": "*/15 * * * *" },
+    { "path": "/api/cron/daily-queue", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/follow-up-check", "schedule": "0 6 * * *" }
+  ]
+}

@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* Enable dark: prefix via .dark class on html */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  /* AM Automations Brand Colors */
+  --color-primary:   #6C5CE7;
+  --color-secondary: #00B894;
+  --color-accent:    #FD7272;
+
+  /* Surfaces (dark defaults) */
+  --color-sidebar:   #0F0F1A;
+  --color-dark:      #1A1A2E;
+  --color-card:      #16213E;
+  --color-elevated:  #1E2A45;
+
+  /* Typography */
+  --color-foreground: #FFFFFF;
+  --color-muted:      rgba(255,255,255,0.45);
+  --color-subtle:     rgba(255,255,255,0.15);
+
+  /* Font */
+  --font-sans: var(--font-inter, system-ui, -apple-system, sans-serif);
+
+  /* Border radius */
+  --radius-card:   12px;
+  --radius-btn:     8px;
+  --radius-input:   8px;
+}
+
+/* ── CSS variables per theme ────────────────────────── */
+:root {
+  --bg-page:     #1A1A2E;
+  --bg-sidebar:  #0F0F1A;
+  --bg-card:     #16213E;
+  --bg-elevated: #1E2A45;
+  --text-base:   #FFFFFF;
+  --text-muted:  rgba(255,255,255,0.45);
+  --border:      rgba(255,255,255,0.07);
+  color-scheme: dark;
+}
+
+.light {
+  --bg-page:     #f8fafc;
+  --bg-sidebar:  #ffffff;
+  --bg-card:     #ffffff;
+  --bg-elevated: #f1f5f9;
+  --text-base:   #0f172a;
+  --text-muted:  #64748b;
+  --border:      #e2e8f0;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-base);
+  font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: rgba(128,128,128,0.2); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.35); }
+
+/* ── Selection ──────────────────────────────────────── */
+::selection { background: rgba(108,92,231,0.28); color: #fff; }
+
+/* ── Sidebar transition ─────────────────────────────── */
+.sidebar-transition {
+  transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Glass card ─────────────────────────────────────── */
+.glass {
+  background: rgba(22, 33, 62, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Gradient text ──────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #6C5CE7 0%, #00B894 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Nav item active indicator ──────────────────────── */
+.nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #6C5CE7;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Light mode overrides for components using hardcoded dark colors ── */
+.light .bg-\[\#0F0F1A\],
+.light .bg-\[\#1A1A2E\] { background-color: var(--bg-sidebar) !important; }
+.light .bg-\[\#16213E\] { background-color: var(--bg-card) !important; }
+.light .bg-\[\#1A1A2E\]\/90 { background-color: rgba(255,255,255,0.95) !important; }
+.light .text-white { color: var(--text-base) !important; }
+.light .text-white\/50,
+.light .text-white\/40,
+.light .text-white\/30 { color: var(--text-muted) !important; }
+.light .border-white\/5,
+.light .border-white\/\[0\.07\] { border-color: var(--border) !important; }
