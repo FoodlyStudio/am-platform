@@ -1,6 +1,6 @@
 'use client'
 
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { Deal, PipelineStage } from '@/types'
 import { PIPELINE_STAGES } from '@/lib/constants'
 import { DealKanbanCard } from './DealKanbanCard'
