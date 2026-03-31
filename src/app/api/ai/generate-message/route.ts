@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 import { createClient } from '@/lib/supabase/server'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 // ─── Per-stage instructions ───────────────────────────────────────────────────
 
@@ -113,7 +112,7 @@ export async function POST(req: NextRequest) {
       STAGE_INSTRUCTIONS[messageType] ??
       'Napisz spersonalizowaną wiadomość LinkedIn nawiązującą do kontekstu firmy.'
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

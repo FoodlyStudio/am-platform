@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const SYSTEM_PROMPT = `Jesteś ekspertem sprzedażowym firmy AM Automations — polskiej agencji web i automatyzacji AI.
 Sprzedajemy: strony www z konwersją (2-5k PLN), chatboty AI (3-8k PLN), systemy wewnętrzne (8-25k PLN).
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'diagnosis_notes is required' }, { status: 400 })
     }
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

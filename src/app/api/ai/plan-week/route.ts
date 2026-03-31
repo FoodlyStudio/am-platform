@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 import { format, addDays } from 'date-fns'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const SYSTEM_PROMPT = `Jesteś strategiem treści dla AM Automations — polskiej agencji web i automatyzacji AI.
 Klienci AM Automations: właściciele małych firm (gabinety medyczne, kancelarie, beauty, budowlanka, szkolenia).
@@ -41,7 +40,7 @@ export async function POST(req: NextRequest) {
     const startDate = weekStart ? new Date(weekStart) : new Date()
     const weekEnd = addDays(startDate, 4)
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

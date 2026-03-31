@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const SYSTEM_PROMPT = `Zaproponuj 5 tematów contentowych dla AM Automations (agencja web i automatyzacji AI w Polsce).
 Klienci: właściciele małych firm (gabinety medyczne, kancelarie, beauty, budowlanka, szkolenia).
@@ -26,7 +25,7 @@ Odpowiedz WYŁĄCZNIE prawidłowym JSON:
 
 export async function GET() {
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
   edukacyjny: 'edukacyjny — uczy czegoś konkretnego, daje wartość praktyczną',
@@ -48,7 +47,7 @@ Odpowiedz WYŁĄCZNIE prawidłowym JSON:
   "char_count": 920
 }`
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const TYPE_INSTRUCTIONS: Record<string, string> = {
   hook: `Hook zatrzymujący scrollowanie — pierwsze zdanie posta. Max 15 słów.
@@ -75,7 +74,7 @@ Odpowiedz WYŁĄCZNIE prawidłowym JSON:
   ]
 }`
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

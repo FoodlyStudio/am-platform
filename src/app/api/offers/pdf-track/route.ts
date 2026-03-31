@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-)
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +16,7 @@ export async function POST(req: NextRequest) {
     const isPricingViewed = Array.isArray(pages_viewed) && pages_viewed.includes(5)
 
     // Insert PDF view record
-    await supabase.from('offer_pdf_views').insert({
+    await getSupabaseAdmin().from('offer_pdf_views').insert({
       deal_id,
       pages_viewed: pages_viewed ?? [],
       is_pricing_page_viewed: isPricingViewed,
@@ -29,7 +25,7 @@ export async function POST(req: NextRequest) {
     })
 
     // Engagement points: PDF view = +10
-    const { data: deal } = await supabase
+    const { data: deal } = await getSupabaseAdmin()
       .from('deals')
       .select('engagement_score')
       .eq('id', deal_id)
@@ -40,10 +36,10 @@ export async function POST(req: NextRequest) {
     if (isPricingViewed) points += 20  // Viewed pricing page
 
     const next = Math.min(100, current + points)
-    await supabase.from('deals').update({ engagement_score: next }).eq('id', deal_id)
+    await getSupabaseAdmin().from('deals').update({ engagement_score: next }).eq('id', deal_id)
 
     if (isPricingViewed) {
-      await supabase.from('notifications').insert({
+      await getSupabaseAdmin().from('notifications').insert({
         deal_id,
         type: 'pricing_viewed',
         title: 'Klient przejrzał sekcję wyceny w PDF',
@@ -55,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     // Hot lead check: 3+ PDF views in last hour
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    const { count } = await supabase
+    const { count } = await getSupabaseAdmin()
       .from('offer_pdf_views')
       .select('*', { count: 'exact', head: true })
       .eq('deal_id', deal_id)
@@ -63,11 +59,11 @@ export async function POST(req: NextRequest) {
 
     if ((count ?? 0) >= 3) {
       await Promise.all([
-        supabase.from('deals').update({
+        getSupabaseAdmin().from('deals').update({
           is_hot: true,
           hot_reason: 'Sprawdza PDF oferty wielokrotnie',
         }).eq('id', deal_id),
-        supabase.from('notifications').insert({
+        getSupabaseAdmin().from('notifications').insert({
           deal_id,
           type: 'hot_lead',
           title: 'Gorący lead — wielokrotnie otwiera PDF!',

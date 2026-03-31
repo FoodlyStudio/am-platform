@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 import { createClient } from '@/lib/supabase/server'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const SYSTEM_PROMPT = `Jesteś doświadczonym konsultantem sprzedaży B2B dla AM Automations.
 Przygotowujesz pre-call brief przed rozmową z potencjalnym klientem.
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
       messages?.length && `Historia outreachu: ${messages.map((m) => `${m.message_type} (${m.status})`).join(', ')}`,
     ].filter(Boolean).join('\n')
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

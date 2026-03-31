@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { addDays, format } from 'date-fns'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-)
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get offer page
-    const { data: offerPage } = await supabase
+    const { data: offerPage } = await getSupabaseAdmin()
       .from('offer_pages')
       .select('id, deal_id, pricing_variants, accepted_at, start_date, expires_at, is_active')
       .eq('public_slug', slug)
@@ -48,7 +44,7 @@ export async function POST(req: NextRequest) {
     const dealId = offerPage.deal_id
 
     // Get deal + lead for client name
-    const { data: deal } = await supabase
+    const { data: deal } = await getSupabaseAdmin()
       .from('deals')
       .select('*, lead:leads(first_name, last_name, company)')
       .eq('id', dealId)
@@ -62,21 +58,21 @@ export async function POST(req: NextRequest) {
 
     await Promise.all([
       // Update offer_pages
-      supabase.from('offer_pages').update({
+      getSupabaseAdmin().from('offer_pages').update({
         accepted_at: now,
         accepted_variant: variant_name,
         accepted_ip: ip,
       }).eq('id', offerPage.id),
 
       // Update deal → wygrana
-      supabase.from('deals').update({
+      getSupabaseAdmin().from('deals').update({
         stage: 'wygrana',
         won_at: now,
         value: variant.price,
       }).eq('id', dealId),
 
       // Insert income (50% deposit)
-      supabase.from('income').insert({
+      getSupabaseAdmin().from('income').insert({
         deal_id: dealId,
         client_name: clientName,
         project_name: deal?.title ?? variant_name,
@@ -90,7 +86,7 @@ export async function POST(req: NextRequest) {
       }),
 
       // Insert notification
-      supabase.from('notifications').insert({
+      getSupabaseAdmin().from('notifications').insert({
         deal_id: dealId,
         type: 'offer_accepted',
         title: 'Klient zaakceptował ofertę!',

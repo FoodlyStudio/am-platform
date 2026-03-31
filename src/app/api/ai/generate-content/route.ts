@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI } from '@/lib/openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const CHANNEL_LABELS: Record<string, string> = {
   instagram: 'Instagram',
@@ -54,7 +53,7 @@ export async function POST(req: NextRequest) {
     const channelLabel = CHANNEL_LABELS[channel ?? ''] ?? (channel ?? 'ogólny')
     const typeLabel = TYPE_LABELS[content_type ?? ''] ?? (content_type ?? 'post')
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
